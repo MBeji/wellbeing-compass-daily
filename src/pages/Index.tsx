@@ -48,35 +48,40 @@ const Index = () => {
         </div>
 
         {/* Navigation */}
-        <div className="flex gap-4 mb-8">
-          <Button
+        <div className="flex gap-4 mb-8">          <Button
             onClick={() => setCurrentView('dashboard')}
-            variant={currentView === 'dashboard' ? 'default' : 'outline'}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${
+              currentView === 'dashboard' 
+                ? 'bg-blue-600 text-white' 
+                : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
           >
             <TrendingUp className="w-4 h-4" />
             Dashboard
-          </Button>
-          <Button
+          </Button>          <Button
             onClick={() => setCurrentView('journal')}
-            variant={currentView === 'journal' ? 'default' : 'outline'}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${
+              currentView === 'journal' 
+                ? 'bg-blue-600 text-white' 
+                : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
           >
             <BookOpen className="w-4 h-4" />
             Journal du jour
-          </Button>
-          <Button
+          </Button>          <Button
             onClick={() => setCurrentView('customization')}
-            variant={currentView === 'customization' ? 'default' : 'outline'}
-            className="flex items-center gap-2"
+            className={`flex items-center gap-2 ${
+              currentView === 'customization' 
+                ? 'bg-blue-600 text-white' 
+                : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
           >
             <Settings className="w-4 h-4" />
             Personnalisation
           </Button>
         </div>
 
-        {/* Content */}
-        {currentView === 'dashboard' ? (
+        {/* Content */}        {currentView === 'dashboard' ? (
           <div className="space-y-8">
             {/* Global Score */}
             <WellnessScore data={todayData} />

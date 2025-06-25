@@ -1,14 +1,17 @@
-
 export const getTodayKey = (): string => {
   return new Date().toISOString().split('T')[0];
 };
 
 export const getWellnessData = (): Record<string, any> => {
+  // Note: Cette fonction reste pour la compatibilité
+  // En mode Firebase, les données viennent du hook useFirebaseWellness
   const saved = localStorage.getItem('wellness-data');
   return saved ? JSON.parse(saved) : {};
 };
 
 export const saveWellnessData = (data: Record<string, number[]>): void => {
+  // Note: Cette fonction reste pour la compatibilité
+  // En mode Firebase, utilisez le hook useFirebaseWellness
   const existing = getWellnessData();
   const todayKey = getTodayKey();
   
@@ -32,11 +35,19 @@ export const calculateGlobalScore = (data: any): number => {
   const allQuestions = getAllQuestions();
   const pillars = allQuestions.map(q => q.pillar);
   const uniquePillars = [...new Set(pillars)];
+  const coefficients = getPillarCoefficients();
   
-  const pillarScores = uniquePillars.map(pillar => calculatePillarScore(data, pillar));
+  let totalWeightedScore = 0;
+  let totalCoefficients = 0;
   
-  const totalScore = pillarScores.reduce((sum, score) => sum + score, 0);
-  return Math.round(totalScore / uniquePillars.length);
+  uniquePillars.forEach(pillar => {
+    const score = calculatePillarScore(data, pillar);
+    const coefficient = coefficients[pillar] || 1; // Default coefficient = 1
+    totalWeightedScore += score * coefficient;
+    totalCoefficients += coefficient;
+  });
+  
+  return totalCoefficients > 0 ? Math.round(totalWeightedScore / totalCoefficients) : 0;
 };
 
 export const getScoreHistory = (days: number = 7): Array<{ date: string; score: number }> => {
@@ -174,4 +185,116 @@ export const getPillarNames = () => {
   });
   
   return { ...defaultNames, ...customNames };
+};
+
+// Gestion des coefficients des piliers (gardé pour compatibilité)
+export const getDefaultCoefficients = (): Record<string, number> => {
+  return {
+    alimentation: 1.0,
+    sport: 1.0,
+    sommeil: 1.2, // Légèrement plus important par défaut
+    stress: 1.1,
+    spiritualite: 1.0,
+    social: 0.9
+  };
+};
+
+export const getPillarCoefficients = (): Record<string, number> => {
+  const saved = localStorage.getItem('pillar-coefficients');
+  if (saved) {
+    const savedCoefficients = JSON.parse(saved);
+    // Fusionner avec les coefficients par défaut pour les nouveaux piliers
+    return { ...getDefaultCoefficients(), ...savedCoefficients };
+  }
+  return getDefaultCoefficients();
+};
+
+export const savePillarCoefficients = (coefficients: Record<string, number>): void => {
+  localStorage.setItem('pillar-coefficients', JSON.stringify(coefficients));
+};
+
+export const resetCoefficientsToDefault = (): void => {
+  localStorage.removeItem('pillar-coefficients');
+};
+
+// Gestion des coefficients des questions individuelles
+export const getDefaultQuestionCoefficients = (): Record<string, number> => {
+  const allQuestions = getAllQuestions();
+  const coefficients: Record<string, number> = {};
+  
+  allQuestions.forEach(({ pillar, questions }) => {
+    questions.forEach((question, index) => {
+      const questionKey = `${pillar}_${index}`;
+      coefficients[questionKey] = 1.0; // Coefficient par défaut
+    });
+  });
+  
+  return coefficients;
+};
+
+export const getQuestionCoefficients = (): Record<string, number> => {
+  const saved = localStorage.getItem('question-coefficients');
+  if (saved) {
+    const savedCoefficients = JSON.parse(saved);
+    // Fusionner avec les coefficients par défaut pour les nouvelles questions
+    return { ...getDefaultQuestionCoefficients(), ...savedCoefficients };
+  }
+  return getDefaultQuestionCoefficients();
+};
+
+export const saveQuestionCoefficients = (coefficients: Record<string, number>): void => {
+  localStorage.setItem('question-coefficients', JSON.stringify(coefficients));
+};
+
+export const resetQuestionCoefficientsToDefault = (): void => {
+  localStorage.removeItem('question-coefficients');
+};
+
+// Fonction pour calculer le score d'un pilier avec coefficients par question
+export const calculatePillarScoreWithQuestionCoefficients = (data: any, pillar: string): number => {
+  if (!data || !data[pillar] || !Array.isArray(data[pillar])) {
+    return 0;
+  }
+  
+  const scores = data[pillar];
+  const coefficients = getQuestionCoefficients();
+  
+  let totalWeightedScore = 0;
+  let totalCoefficients = 0;
+  
+  scores.forEach((score: number, index: number) => {
+    const questionKey = `${pillar}_${index}`;
+    const coefficient = coefficients[questionKey] || 1.0;
+    totalWeightedScore += score * coefficient;
+    totalCoefficients += coefficient;
+  });
+  
+  return totalCoefficients > 0 ? Math.round(totalWeightedScore / totalCoefficients) : 0;
+};
+
+// Fonction pour calculer le score global avec coefficients par question
+export const calculateGlobalScoreWithQuestionCoefficients = (data: any): number => {
+  if (!data) return 0;
+  
+  const allQuestions = getAllQuestions();
+  const pillars = allQuestions.map(q => q.pillar);
+  const uniquePillars = [...new Set(pillars)];
+  
+  let totalWeightedScore = 0;
+  let totalCoefficients = 0;
+  
+  uniquePillars.forEach(pillar => {
+    const pillarData = data[pillar];
+    if (pillarData && Array.isArray(pillarData)) {
+      const coefficients = getQuestionCoefficients();
+      
+      pillarData.forEach((score: number, index: number) => {
+        const questionKey = `${pillar}_${index}`;
+        const coefficient = coefficients[questionKey] || 1.0;
+        totalWeightedScore += score * coefficient;
+        totalCoefficients += coefficient;
+      });
+    }
+  });
+    return totalCoefficients > 0 ? Math.round(totalWeightedScore / totalCoefficients) : 0;
 };

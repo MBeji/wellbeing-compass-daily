@@ -1,7 +1,11 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { calculatePillarScore } from '@/utils/wellnessUtils';
+import { 
+  calculatePillarScore, 
+  calculatePillarScoreWithQuestionCoefficients,
+  getQuestionCoefficients 
+} from '@/utils/wellnessUtils';
 import { 
   Apple, 
   Dumbbell, 
@@ -61,12 +65,30 @@ const pillars = [
 ];
 
 const PillarCards = ({ data }: PillarCardsProps) => {
+  const questionCoefficients = getQuestionCoefficients();
+  
+  // Fonction pour déterminer l'importance moyenne d'un pilier basée sur ses questions
+  const getPillarImportance = (pillarKey: string) => {
+    const pillarQuestionKeys = Object.keys(questionCoefficients).filter(key => key.startsWith(pillarKey + '_'));
+    if (pillarQuestionKeys.length === 0) return 1.0;
+    
+    const totalCoefficient = pillarQuestionKeys.reduce((sum, key) => sum + questionCoefficients[key], 0);
+    return totalCoefficient / pillarQuestionKeys.length;
+  };
+  
+  const getImportanceIndicator = (coefficient: number) => {
+    if (coefficient >= 1.3) return { emoji: '🔴', label: 'Très important' };
+    if (coefficient >= 1.1) return { emoji: '🟡', label: 'Important' };
+    if (coefficient <= 0.8) return { emoji: '🔵', label: 'Secondaire' };
+    return null;
+  };
   return (
     <div>
       <h3 className="text-xl font-semibold text-gray-800 mb-6">Scores par Pilier</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {pillars.map((pillar) => {
-          const score = calculatePillarScore(data, pillar.key);
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">        {pillars.map((pillar) => {
+          const score = calculatePillarScoreWithQuestionCoefficients(data, pillar.key);
+          const avgCoefficient = getPillarImportance(pillar.key);
+          const importanceIndicator = getImportanceIndicator(avgCoefficient);
           const IconComponent = pillar.icon;
           
           return (
@@ -82,7 +104,14 @@ const PillarCards = ({ data }: PillarCardsProps) => {
                 </div>
               </div>
               
-              <h4 className="font-semibold text-gray-800 mb-2">{pillar.name}</h4>
+              <h4 className="font-semibold text-gray-800 mb-2 flex items-center justify-between">
+                <span>{pillar.name}</span>
+                {importanceIndicator && (
+                  <span className="text-xs" title={`Coefficient moyen: ${avgCoefficient.toFixed(1)}x - ${importanceIndicator.label}`}>
+                    {importanceIndicator.emoji}
+                  </span>
+                )}
+              </h4>
               
               {/* Progress bar */}
               <div className="w-full bg-white rounded-full h-2 overflow-hidden">

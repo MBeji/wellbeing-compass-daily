@@ -1,14 +1,21 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { calculateGlobalScore } from '@/utils/wellnessUtils';
+import { 
+  calculateGlobalScore, 
+  calculateGlobalScoreWithQuestionCoefficients,
+  getQuestionCoefficients 
+} from '@/utils/wellnessUtils';
 
 interface WellnessScoreProps {
   data: any;
 }
 
 const WellnessScore = ({ data }: WellnessScoreProps) => {
-  const globalScore = calculateGlobalScore(data);
+  // Utiliser le nouveau système de coefficients par question
+  const globalScore = calculateGlobalScoreWithQuestionCoefficients(data);
+  const questionCoefficients = getQuestionCoefficients();
+  const hasCustomCoefficients = Object.values(questionCoefficients).some(coef => coef !== 1.0);
   
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
@@ -65,9 +72,13 @@ const WellnessScore = ({ data }: WellnessScoreProps) => {
       <p className={`text-lg font-medium mb-2 ${getScoreColor(globalScore)}`}>
         {getScoreMessage(globalScore)}
       </p>
-      
-      <p className="text-sm text-gray-600">
-        Basé sur l'évaluation de vos 6 piliers de bien-être
+        <p className="text-sm text-gray-600">
+        Basé sur l'évaluation de vos piliers de bien-être
+        {hasCustomCoefficients && (
+          <span className="block text-xs text-blue-600 mt-1">
+            ⚖️ Coefficients personnalisés appliqués
+          </span>
+        )}
       </p>
     </Card>
   );
