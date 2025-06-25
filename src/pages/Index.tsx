@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, TrendingUp } from 'lucide-react';
+import { BookOpen, TrendingUp, Settings } from 'lucide-react';
 import WellnessScore from '@/components/WellnessScore';
 import PillarCards from '@/components/PillarCards';
 import DailyJournal from '@/components/DailyJournal';
+import CustomizationSettings from '@/components/CustomizationSettings';
 import { getWellnessData, getTodayKey } from '@/utils/wellnessUtils';
 
 const Index = () => {
@@ -64,6 +65,14 @@ const Index = () => {
             <BookOpen className="w-4 h-4" />
             Journal du jour
           </Button>
+          <Button
+            onClick={() => setCurrentView('customization')}
+            variant={currentView === 'customization' ? 'default' : 'outline'}
+            className="flex items-center gap-2"
+          >
+            <Settings className="w-4 h-4" />
+            Personnalisation
+          </Button>
         </div>
 
         {/* Content */}
@@ -91,8 +100,10 @@ const Index = () => {
               </Button>
             </Card>
           </div>
-        ) : (
+        ) : currentView === 'journal' ? (
           <DailyJournal onSave={refreshData} />
+        ) : (
+          <CustomizationSettings />
         )}
       </div>
     </div>

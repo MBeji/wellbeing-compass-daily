@@ -3,70 +3,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { saveWellnessData, getWellnessData, getTodayKey } from '@/utils/wellnessUtils';
+import { saveWellnessData, getWellnessData, getTodayKey, getAllQuestions, getPillarNames } from '@/utils/wellnessUtils';
 import { useToast } from '@/hooks/use-toast';
 
 interface DailyJournalProps {
   onSave: () => void;
 }
 
-const questions = [
-  {
-    pillar: 'alimentation',
-    questions: [
-      'Ai-je évité le sucre, le pain blanc et les aliments transformés ?',
-      'Ai-je consommé suffisamment de légumes, fruits et de l\'eau ?',
-      'Ai-je consommé assez de protéines aujourd\'hui ?'
-    ]
-  },
-  {
-    pillar: 'sport',
-    questions: [
-      'Ai-je fait une séance de sport aujourd\'hui ?'
-    ]
-  },
-  {
-    pillar: 'sommeil',
-    questions: [
-      'Ai-je bien dormi (quantité et qualité) ?'
-    ]
-  },
-  {
-    pillar: 'stress',
-    questions: [
-      'Ai-je bien géré mon temps d\'écran ?',
-      'Ai-je protégé mes 5 sens (langue, yeux, pensées, etc.) ?'
-    ]
-  },
-  {
-    pillar: 'spiritualite',
-    questions: [
-      'Ai-je accompli mes 5 prières à l\'heure, dont 3 en groupe ?',
-      'Ai-je respecté mon programme de Coran (lecture, mémorisation) ?',
-      'Ai-je récité les doâs du matin et du soir ?'
-    ]
-  },
-  {
-    pillar: 'social',
-    questions: [
-      'Ai-je été utile à ma famille ou mon entourage ?',
-      'Ai-je aidé quelqu\'un aujourd\'hui (même petit geste) ?',
-      'Ai-je été bienveillant dans mes interactions ?'
-    ]
-  }
-];
-
-const pillarNames = {
-  alimentation: 'Alimentation 🥗',
-  sport: 'Sport 💪',
-  sommeil: 'Sommeil 😴',
-  stress: 'Stress / Équilibre 🧘',
-  spiritualite: 'Spiritualité 🕌',
-  social: 'Social ❤️'
-};
-
 const DailyJournal = ({ onSave }: DailyJournalProps) => {
   const [responses, setResponses] = useState<Record<string, number[]>>({});
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [pillarNames, setPillarNames] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   // Debounced auto-save function
@@ -80,6 +27,13 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
   );
 
   useEffect(() => {
+    // Charger les questions (par défaut + personnalisées)
+    const allQuestions = getAllQuestions();
+    const allPillarNames = getPillarNames();
+    
+    setQuestions(allQuestions);
+    setPillarNames(allPillarNames);
+
     const data = getWellnessData();
     const todayKey = getTodayKey();
     const todayData = data[todayKey];
@@ -89,7 +43,7 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
     } else {
       // Initialize with default values
       const initialResponses: Record<string, number[]> = {};
-      questions.forEach(({ pillar, questions: pillarQuestions }) => {
+      allQuestions.forEach(({ pillar, questions: pillarQuestions }) => {
         initialResponses[pillar] = new Array(pillarQuestions.length).fill(50);
       });
       setResponses(initialResponses);
@@ -132,11 +86,11 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
       {questions.map(({ pillar, questions: pillarQuestions }) => (
         <Card key={pillar} className="p-6 bg-white/70 backdrop-blur border-0 shadow-lg">
           <h3 className="text-xl font-semibold text-gray-800 mb-6">
-            {pillarNames[pillar as keyof typeof pillarNames]}
+            {pillarNames[pillar] || pillar}
           </h3>
           
           <div className="space-y-6">
-            {pillarQuestions.map((question, questionIndex) => {
+            {pillarQuestions.map((question: string, questionIndex: number) => {
               const value = responses[pillar]?.[questionIndex] || 50;
               
               return (
