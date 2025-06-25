@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -69,6 +69,16 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
   const [responses, setResponses] = useState<Record<string, number[]>>({});
   const { toast } = useToast();
 
+  // Debounced auto-save function
+  const debouncedSave = useCallback(
+    debounce((data: Record<string, number[]>) => {
+      saveWellnessData(data);
+      onSave();
+      console.log('Auto-sauvegarde effectuée');
+    }, 1000),
+    [onSave]
+  );
+
   useEffect(() => {
     const data = getWellnessData();
     const todayKey = getTodayKey();
@@ -86,6 +96,13 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
     }
   }, []);
 
+  // Auto-save when responses change
+  useEffect(() => {
+    if (Object.keys(responses).length > 0) {
+      debouncedSave(responses);
+    }
+  }, [responses, debouncedSave]);
+
   const updateResponse = (pillar: string, questionIndex: number, value: number) => {
     setResponses(prev => ({
       ...prev,
@@ -95,7 +112,7 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
     }));
   };
 
-  const handleSave = () => {
+  const handleManualSave = () => {
     saveWellnessData(responses);
     onSave();
     toast({
@@ -109,6 +126,7 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Journal Quotidien</h2>
         <p className="text-gray-600">Évaluez chaque aspect de votre bien-être sur une échelle de 0 à 100%</p>
+        <p className="text-sm text-green-600 mt-2">✓ Sauvegarde automatique activée</p>
       </div>
 
       {questions.map(({ pillar, questions: pillarQuestions }) => (
@@ -156,14 +174,30 @@ const DailyJournal = ({ onSave }: DailyJournalProps) => {
 
       <div className="text-center pt-6">
         <Button 
-          onClick={handleSave}
-          className="px-8 py-3 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-lg"
+          onClick={handleManualSave}
+          variant="outline"
+          className="px-8 py-3 text-lg"
         >
-          Sauvegarder mon évaluation
+          Sauvegarder manuellement
         </Button>
+        <p className="text-xs text-gray-500 mt-2">
+          Les données sont automatiquement sauvegardées pendant la saisie
+        </p>
       </div>
     </div>
   );
 };
+
+// Utility function for debouncing
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
 
 export default DailyJournal;
