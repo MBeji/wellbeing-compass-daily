@@ -28,6 +28,14 @@ La page de personnalisation a été entièrement restructurée pour permettre un
 - ✅ **Suppression Intelligente** : Supprime le pilier et toutes ses questions associées
 - ✅ **Visualisation** : Interface claire avec émojis et noms personnalisés
 
+### 5. Graphiques d'Évolution Temporelle ⭐ NOUVEAU
+- ✅ **Graphique Complet** : Visualisation détaillée sur 7 ou 30 jours avec ligne/aire
+- ✅ **Aperçu Dashboard** : Mini-graphique avec tendance dans le tableau de bord
+- ✅ **Insights Intelligents** : Analyse automatique des tendances et recommandations
+- ✅ **Statistiques** : Score moyen, tendance, meilleur jour, stabilité
+- ✅ **Comparaison Piliers** : Affichage optionnel de l'évolution par pilier
+- ✅ **Navigation Intuitive** : Onglet dédié "Évolution" dans la navigation principale
+
 ## 🛠️ Modifications Techniques
 
 ### Nouveaux Utilitaires (wellnessUtils.ts)
@@ -45,10 +53,16 @@ La page de personnalisation a été entièrement restructurée pour permettre un
 - ✅ **AdvancedCustomizationSettings.tsx** : Interface complète avec onglets et gestion avancée
 - ✅ **CustomizationSettings.tsx** : Simplifié pour utiliser le nouveau composant
 
+### Nouveaux Composants d'Évolution ⭐ NOUVEAU
+- ✅ **EvolutionChart.tsx** : Graphique complet avec contrôles (7/30 jours, ligne/aire, piliers)
+- ✅ **EvolutionPreview.tsx** : Aperçu compact pour le dashboard avec tendance
+- ✅ **EvolutionInsights.tsx** : Analyse intelligente et recommandations automatiques
+
 ### Composants Mis à Jour
 - ✅ **WellnessScore.tsx** : Utilise les coefficients par question
 - ✅ **PillarCards.tsx** : Calcule l'importance moyenne basée sur les questions
 - ✅ **DailyJournal.tsx** : Compatible avec le nouveau système de calcul
+- ✅ **Index.tsx** : Navigation étendue avec onglet "Évolution"
 
 ## 📊 Calculs Améliorés
 
@@ -103,6 +117,12 @@ Exemple: Pilier "Alimentation"
 - "Régularité des repas" → 1.3x (important)
 - "Hydratation" → 1.5x (très important)
 ```
+
+### Suivi Temporel et Tendances ⭐ NOUVEAU
+- **Analyse de Progression** : Visualisation des améliorations sur 7/30 jours
+- **Détection d'Anomalies** : Alerts automatiques sur les baisses importantes
+- **Insights Personnalisés** : Recommandations basées sur les patterns individuels
+- **Comparaison de Périodes** : Évolution comparative entre différentes phases
 
 ### Objectifs Spécialisés
 - **Mode Performance** : Coefficients élevés sur sommeil et nutrition

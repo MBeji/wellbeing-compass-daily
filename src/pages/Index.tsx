@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { BookOpen, TrendingUp, Settings } from 'lucide-react';
+import { BookOpen, TrendingUp, Settings, BarChart3 } from 'lucide-react';
 import WellnessScore from '@/components/WellnessScore';
 import PillarCards from '@/components/PillarCards';
 import DailyJournal from '@/components/DailyJournal';
 import CustomizationSettings from '@/components/CustomizationSettings';
+import EvolutionChart from '@/components/EvolutionChart';
+import EvolutionPreview from '@/components/EvolutionPreview';
 import { getWellnessData, getTodayKey } from '@/utils/wellnessUtils';
 
 const Index = () => {
@@ -45,10 +47,9 @@ const Index = () => {
               })}
             </p>
           </div>
-        </div>
-
-        {/* Navigation */}
-        <div className="flex gap-4 mb-8">          <Button
+        </div>        {/* Navigation */}
+        <div className="flex gap-4 mb-8">
+          <Button
             onClick={() => setCurrentView('dashboard')}
             className={`flex items-center gap-2 ${
               currentView === 'dashboard' 
@@ -58,7 +59,21 @@ const Index = () => {
           >
             <TrendingUp className="w-4 h-4" />
             Dashboard
-          </Button>          <Button
+          </Button>
+
+          <Button
+            onClick={() => setCurrentView('evolution')}
+            className={`flex items-center gap-2 ${
+              currentView === 'evolution' 
+                ? 'bg-blue-600 text-white' 
+                : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            Évolution
+          </Button>
+
+          <Button
             onClick={() => setCurrentView('journal')}
             className={`flex items-center gap-2 ${
               currentView === 'journal' 
@@ -68,7 +83,9 @@ const Index = () => {
           >
             <BookOpen className="w-4 h-4" />
             Journal du jour
-          </Button>          <Button
+          </Button>
+
+          <Button
             onClick={() => setCurrentView('customization')}
             className={`flex items-center gap-2 ${
               currentView === 'customization' 
@@ -79,12 +96,16 @@ const Index = () => {
             <Settings className="w-4 h-4" />
             Personnalisation
           </Button>
-        </div>
-
-        {/* Content */}        {currentView === 'dashboard' ? (
+        </div>        {/* Content */}        {currentView === 'dashboard' ? (
           <div className="space-y-8">
             {/* Global Score */}
             <WellnessScore data={todayData} />
+            
+            {/* Evolution Preview */}
+            <EvolutionPreview 
+              currentData={todayData}
+              onViewFullChart={() => setCurrentView('evolution')}
+            />
             
             {/* Pillar Cards */}
             <PillarCards data={todayData} />
@@ -105,6 +126,8 @@ const Index = () => {
               </Button>
             </Card>
           </div>
+        ) : currentView === 'evolution' ? (
+          <EvolutionChart currentData={todayData} />
         ) : currentView === 'journal' ? (
           <DailyJournal onSave={refreshData} />
         ) : (
