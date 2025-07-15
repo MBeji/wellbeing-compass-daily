@@ -10,7 +10,7 @@ import {
   Apple, 
   Dumbbell, 
   Moon, 
-  Brain, 
+  Scale, 
   Heart, 
   Users 
 } from 'lucide-react';
@@ -40,11 +40,10 @@ const pillars = [
     icon: Moon,
     color: 'from-purple-500 to-purple-600',
     bgColor: 'bg-purple-50'
-  },
-  {
+  },  {
     key: 'stress',
-    name: 'Équilibre',
-    icon: Brain,
+    name: 'Équilibre & Addictions',
+    icon: Scale,
     color: 'from-blue-500 to-blue-600',
     bgColor: 'bg-blue-50'
   },

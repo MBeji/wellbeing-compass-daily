@@ -42,12 +42,11 @@ const AdvancedCustomizationSettings = () => {
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
   const [editQuestionText, setEditQuestionText] = useState('');
   const { toast } = useToast();
-
   const defaultPillars = [
     { id: 'alimentation', name: 'Alimentation', emoji: '🍎' },
     { id: 'sport', name: 'Sport', emoji: '💪' },
     { id: 'sommeil', name: 'Sommeil', emoji: '😴' },
-    { id: 'stress', name: 'Stress', emoji: '🧘' },
+    { id: 'stress', name: 'Équilibre & Addictions', emoji: '⚖️' },
     { id: 'spiritualite', name: 'Spiritualité', emoji: '🙏' },
     { id: 'social', name: 'Social', emoji: '👥' }
   ];

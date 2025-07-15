@@ -92,11 +92,13 @@ export const getDefaultQuestions = () => [
     questions: [
       'Ai-je bien dormi (quantité et qualité) ?'
     ]
-  },
-  {
+  },  {
     pillar: 'stress',
     questions: [
       'Ai-je bien géré mon temps d\'écran ?',
+      'Ai-je évité les addictions (cigarettes, alcool, etc.) ?',
+      'Ai-je su résister aux tentations néfastes ?',
+      'Ai-je maintenu un équilibre émotionnel ?',
       'Ai-je protégé mes 5 sens (langue, yeux, pensées, etc.) ?'
     ]
   },
@@ -167,12 +169,11 @@ export const getAllQuestions = () => {
 };
 
 // Noms des piliers (par défaut + personnalisés)
-export const getPillarNames = () => {
-  const defaultNames = {
+export const getPillarNames = () => {  const defaultNames = {
     alimentation: 'Alimentation 🥗',
     sport: 'Sport 💪',
     sommeil: 'Sommeil 😴',
-    stress: 'Stress / Équilibre 🧘',
+    stress: 'Équilibre & Addictions ⚖️',
     spiritualite: 'Spiritualité 🕌',
     social: 'Social ❤️'
   };

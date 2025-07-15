@@ -175,9 +175,8 @@ const CoefficientSettings = () => {
 
       {/* Section d'exemples d'utilisation */}
       <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-        <h4 className="font-medium text-yellow-800 mb-2">💡 Exemples d'utilisation</h4>
-        <div className="text-sm text-yellow-700 space-y-2">
-          <p><strong>Période d'examen :</strong> Augmentez "Sommeil" (1.5x) et "Stress" (1.3x)</p>
+        <h4 className="font-medium text-yellow-800 mb-2">💡 Exemples d'utilisation</h4>        <div className="text-sm text-yellow-700 space-y-2">
+          <p><strong>Période d'examen :</strong> Augmentez "Sommeil" (1.5x) et "Équilibre & Addictions" (1.3x)</p>
           <p><strong>Objectif sportif :</strong> Augmentez "Sport" (1.4x) et "Alimentation" (1.2x)</p>
           <p><strong>Période spirituelle :</strong> Augmentez "Spiritualité" (1.5x)</p>
           <p><strong>Récupération :</strong> Réduisez "Social" (0.7x), augmentez "Sommeil" (1.3x)</p>
