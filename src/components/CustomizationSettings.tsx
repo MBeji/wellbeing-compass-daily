@@ -1,9 +1,9 @@
 
 import React from 'react';
-import AdvancedCustomizationSettings from './AdvancedCustomizationSettings';
+import EnhancedCustomizationSettings from './EnhancedCustomizationSettings';
 
 const CustomizationSettings = () => {
-  return <AdvancedCustomizationSettings />;
+  return <EnhancedCustomizationSettings />;
 };
 
 export default CustomizationSettings;

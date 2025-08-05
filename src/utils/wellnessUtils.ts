@@ -120,6 +120,34 @@ export const getDefaultQuestions = () => [
   }
 ];
 
+// Gestion des questions modifiées
+export const getModifiedDefaultQuestions = (): Record<string, string[]> => {
+  const saved = localStorage.getItem('modified-default-questions');
+  if (saved) {
+    return JSON.parse(saved);
+  }
+  return {};
+};
+
+export const saveModifiedDefaultQuestions = (modifiedQuestions: Record<string, string[]>): void => {
+  localStorage.setItem('modified-default-questions', JSON.stringify(modifiedQuestions));
+};
+
+export const resetDefaultQuestions = (): void => {
+  localStorage.removeItem('modified-default-questions');
+};
+
+// Obtenir les questions par défaut avec les modifications appliquées
+export const getEffectiveDefaultQuestions = () => {
+  const originalQuestions = getDefaultQuestions();
+  const modifiedQuestions = getModifiedDefaultQuestions();
+  
+  return originalQuestions.map(({ pillar, questions }) => ({
+    pillar,
+    questions: modifiedQuestions[pillar] || questions
+  }));
+};
+
 // Gestion des questions personnalisées
 export const getCustomQuestions = (): { customQuestions: any[], customPillars: any[] } => {
   const saved = localStorage.getItem('custom-questions');
@@ -135,7 +163,7 @@ export const saveCustomQuestions = (customQuestions: any[], customPillars: any[]
 
 // Combine les questions par défaut et personnalisées
 export const getAllQuestions = () => {
-  const defaultQuestions = getDefaultQuestions();
+  const defaultQuestions = getEffectiveDefaultQuestions(); // Utilise les questions modifiées
   const { customQuestions, customPillars } = getCustomQuestions();
   
   // Ajouter les questions personnalisées aux piliers existants
